@@ -7,6 +7,12 @@ This project is the starting line of a practical study plan to master low-level 
 
 Currently, this repository is in **Phase 1: Project Setup & Core Foundations**.
 
+* **The Task:** Create an abstraction of a 32-bit hardware status register (`uint32_t STATUS_REG`). Write pure C functions to interact with individual bits representing states:
+    * `Bit 0`: SYSTEM_READY
+    * `Bit 1`: SENSOR_ACTIVE
+    * `Bit 2`: ERROR_FLAG
+    * `Bit 3`: DATA_AVAILABLE
+
 ---
 
 ## 🛠️ Development Environment Setup (VS Code)
