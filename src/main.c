@@ -6,6 +6,9 @@
 #define BIT_SYSTEM_READY  0
 #define BIT_SENSOR_ACTIVE 1
 #define BIT_ERROR_FLAG    2
+#define BIT_DATA_AVAILABLE 3
+
+volatile uint32_t STATUS_REG = 0;
 
 
 void set_bit(uint32_t *reg, uint8_t bit_pos) {
@@ -42,23 +45,21 @@ void print_binary(uint32_t num) {
     printf("\n");
 }
 
+void Interrupt_Handler(void) {
+    // Hardware sets DATA_AVAILABLE and clears SENSOR_ACTIVE
+    set_bit((uint32_t *)&STATUS_REG, BIT_DATA_AVAILABLE);
+    clear_bit((uint32_t *)&STATUS_REG, BIT_SENSOR_ACTIVE);
+}
+
 int main() {
-    uint32_t status_register = 0x0; // Start with all bits 0
+    set_bit((uint32_t *)&STATUS_REG, BIT_SENSOR_ACTIVE);
+    printf("Sensor activated. Waiting for hardware data...\n");
+    Interrupt_Handler();
 
-    printf("--- INITIAL STATE ---\n");
-    print_binary(status_register);
+    while (!is_bit_set(STATUS_REG, BIT_DATA_AVAILABLE)) {
+        // Waiting...
+    }
 
-    printf("\n--- SETTING SYSTEM_READY (Bit 0) ---\n");
-    set_bit(&status_register, BIT_SYSTEM_READY);
-    print_binary(status_register);
-
-    printf("\n--- SETTING ERROR_FLAG (Bit 2) ---\n");
-    set_bit(&status_register, BIT_ERROR_FLAG);
-    print_binary(status_register);
-
-    printf("\n--- CLEARING SYSTEM_READY (Bit 0) ---\n");
-    clear_bit(&status_register, BIT_SYSTEM_READY);
-    print_binary(status_register);
-
+    printf("Data received successfully!\n");
     return 0;
 }
